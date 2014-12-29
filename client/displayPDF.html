@@ -1,0 +1,45 @@
+<template name="publication">
+  <div id="publication">
+    <div class="viewer">
+      {{> publicationScroller}}
+      {{> publicationDisplay}}
+    </div>
+  </div>
+</template>
+
+<template name="publicationDisplay">
+  <div class="display-wrapper">
+    <div class="loading">
+      <h2></h2>
+    </div>
+  </div>
+</template>
+
+<template name="publicationScroller">
+  <div class="scroller">
+    {{#each sections}}
+      {{> publicationScrollerSection}}
+    {{/each}}
+    <div class="viewport"></div>
+  </div>
+</template>
+
+<template name="publicationScrollerSection">
+  <div class="section" style="height: {{heightPercentage}}%; top: {{topPercentage}}%"></div>
+</template>
+
+<template name="displayPage">
+  <div id="display-page-{{pageNumber}}" class="display-page">
+    <canvas class="display-canvas content-background" data-page-number="{{ pageNumber }}"></canvas>
+    <canvas class="highlights-canvas"></canvas>
+    <div class="highlights-layer"></div>
+    <div class="text-layer selection-layer"> </div>
+    <div class="hightlights-control">
+      <div class="meta-menu">
+        <i class="icon-menu"></i>
+        <div class="meta-content"> </div>
+      </div>
+    </div>
+    <div class="loading"> {{ pageNumber }} </div>
+  </div>
+</template>

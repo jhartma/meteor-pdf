@@ -1,0 +1,888 @@
+@import 'variables.import'
+
+section.publication
+  padding-top header-height
+  margin-top 0
+
+  .container
+    margin 0
+    width 100%
+
+section.publication
+  .loading
+  .not-found
+    margin-left auto
+    margin-right auto
+    width 94%
+    margin-top section-margin-top - header-height
+
+/* Meta menu
+============ */
+
+/* Have to be defined here because we are using them in meta menu as well */
+scroller-width = 60px
+scroller-left = 12px
+scroller-bottom = 20px
+
+meta-menu-width = 28px
+meta-menu-height = 22px
+meta-menu-padding = 10px
+meta-menu-margin = 20px
+meta-menu-outer-width = meta-menu-width + 2 * meta-menu-padding
+meta-menu-outer-height = meta-menu-height + 2 * meta-menu-padding
+meta-menu-top = header-height + 15px
+meta-menu-left = scroller-left + (scroller-width - meta-menu-outer-width) / 2
+meta-menu-icon-font-size = 20px
+
+.meta-menu
+  position fixed
+  width meta-menu-width
+  height meta-menu-height
+  top meta-menu-top
+  left meta-menu-left
+  padding meta-menu-padding
+  background #cececf
+  border-radius 2px
+  z-index 100
+  transition 0.2s
+  /* We limit only to those we use in hover so that we do not animate
+     by accident highlight control as we move them around from one
+     highlight to another */
+  transition-property background, width, min-height
+
+  a
+    color white
+
+  i.icon-menu
+    font-size meta-menu-icon-font-size
+    color white
+
+  .meta-content
+    display none
+    color white
+    padding 5px
+
+    .editable.title
+      display inline-block
+      padding-right 25px
+      position relative
+
+      .edit
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+
+      .edit:hover
+        color inherit
+
+      .icon-edit::before
+        position absolute
+        top 1px
+        right 0
+
+    .editable.title.editing
+      padding-right 0
+      display block
+
+    .authors
+      span::after
+        content ","
+
+      span:last-child::after
+        content ""
+
+    .time
+      margin-bottom 0
+      margin-top 0
+      font-size smaller
+
+.meta-menu:hover, .meta-menu.displayed
+  background overlay-translucent
+  width 300px
+  height auto
+  z-index 101
+
+  .meta-content
+    display block
+
+/* Library operations menu
+========================== */
+
+.library-menu.meta-menu
+  top meta-menu-top + (meta-menu-height + 2 * meta-menu-padding + meta-menu-margin)
+
+  .icon
+    display inline-block
+    font-size 20px
+    color white
+    vertical-align top
+
+  .library-menu-button
+    display none
+    margin-left 5px
+
+.library-menu.meta-menu:hover
+  z-index 101
+
+  .library-menu-button
+    display inline-block
+
+.library-menu-collections
+  .publications-count
+    font-weight 300
+    font-size 12px
+    margin-left 10px
+
+/* Scroller
+=========== */
+
+.scroller
+  position fixed
+  width scroller-width
+  top meta-menu-top + 2 * (meta-menu-height + 2 * meta-menu-padding + meta-menu-margin)
+  left scroller-left
+  bottom 20px
+  z-index 50
+
+  .section
+    position absolute
+    width meta-menu-outer-width
+    left ((scroller-width - meta-menu-outer-width - 2) / 2)
+    background #eee
+    border 1px solid light-grey
+
+  .section:first-of-type
+    border-radius 3px 3px 0 0
+
+  .section:last-of-type
+    border-radius 0 0 3px 3px
+
+  .section:hover
+    background rgba(46,46,44,0.12)
+
+  .viewport
+    position absolute
+    width 100%
+    background rgba(0,0,0,0.15)
+    border-radius 2px
+    z-index 60
+    cursor ns-resize
+
+/* The size of the scroller depends on the presence of the library menu (which is shown only for logged in users). */
+.logged-out .scroller
+  top meta-menu-top + (meta-menu-height + 2 * meta-menu-padding + meta-menu-margin)
+
+/* Viewer
+========= */
+
+viewer-left = scroller-width + 2 * scroller-left
+viewer-top = meta-menu-top - header-height
+
+small-meta-menu-width = 20px
+small-meta-menu-height = 18px
+small-meta-menu-padding = 5px
+small-meta-menu-icon-font-size = 13px
+
+.viewer
+  .display-wrapper
+    /* Initially we set it to display-page-loading width and
+       then in code we update it to real width based on the PDF */
+    width display-page-loading-width
+    margin-left viewer-left
+    margin-top viewer-top
+    /* We disable selection so that user cannot select anything between pages (in Firefox) */
+    user-select none
+
+    /* Keep in sync with public/css/initial.css */
+    .loading
+      display inline-block
+      height 5em
+      vertical-align top
+      background-image url("/packages/pdf.js/pdf.js/web/images/loading-icon.gif")
+      background-position 50% 90%
+      background-repeat no-repeat
+
+    .display-page
+      position relative
+      /* Has to be set otherwise there is 4px of additional height to display-page */
+      line-height 0
+      margin-bottom 20px
+
+      .content-background
+        background rgba(255,255,255,1.0)
+        border-radius 2px
+        border 1px solid #e3e3e3
+
+      .highlights-canvas
+      .content-background
+        position absolute
+        left 0
+        top 0
+        width 100%
+        height 100%
+
+      .selection-layer
+        /* Should not have any margin or padding, because otherwise
+           highlight position calculation is wrong */
+        position relative
+
+      .highlights-layer
+      .text-layer
+      .highlights-control
+        color transparent
+
+      .highlights-layer
+        .highlights-layer-segment
+          position absolute
+          background-color highlight-color
+
+        .highlights-layer-highlight.selected .highlights-layer-segment
+          background-color transparent
+
+      .text-layer
+        /* Should not have any margin or padding, because otherwise
+           highlight position calculation is wrong */
+        line-height 1
+        white-space pre
+        cursor text
+        overflow hidden
+        position absolute
+        left 0
+        top 0
+        width 100%
+        height 100%
+
+        .text-layer-segment
+          position absolute
+
+          /* We re-enable selection for text layer */
+          user-select text
+
+      .highlights-control
+        line-height default-line-height
+
+        .meta-menu
+          position absolute
+          display none
+          width small-meta-menu-width
+          height small-meta-menu-height
+          padding small-meta-menu-padding
+          z-index 200
+
+          i.icon-menu
+            font-size small-meta-menu-icon-font-size
+
+          .meta-content
+            .references
+              span::after
+                content ","
+
+              span:last-child::after
+                content ""
+
+        .meta-menu:hover
+        .meta-menu.displayed
+          width 245px
+          height auto
+
+      /* Keep in sync with public/css/initial.css */
+      .loading
+        position absolute
+        left 50%
+        top 50%
+        height 10em
+        width 10em
+        margin-left -5em
+        margin-top -7em
+        line-height 10em
+        background-image url("/packages/pdf.js/pdf.js/web/images/loading-icon.gif")
+        background-position 50% 90%
+        background-repeat no-repeat
+        text-align center
+
+      .text-layer-dummy
+        line-height default-line-height
+        position absolute
+        color transparent
+        cursor default
+        top 0
+        left 0
+        width 100%
+        /* To be able to detect overflow and scale text
+           we do not set height and we set overflow to visible */
+        overflow visible
+
+    .display-page-loading
+      width display-page-loading-width
+      height display-page-loading-height
+
+/* Debugging PDF parsing
+======================== */
+
+.viewer .display-page
+  .segment
+    position absolute
+
+  .text-segment
+    background-color rgba(180,170,0,0.2)
+    color rgba(230,20,20,0.4)
+    line-height 1
+    white-space pre
+    cursor text
+
+    /* We re-enable selection for text segments */
+    user-select text
+
+  .image-segment
+    background-color rgba(240,110,0,0.2)
+
+/* Annotations
+============== */
+
+/* Initially we set it based on display-page-loading width and
+   then in code we update it to real width based on the PDF */
+annotations-left = viewer-left + display-page-loading-width + meta-menu-left
+annotations-right = meta-menu-left
+annotations-control-height = 30px
+
+.annotations-control
+  background #cececf
+  border-radius 2px
+  height annotations-control-height
+  position fixed
+  left annotations-left
+  right annotations-right
+  top meta-menu-top
+  z-index 200
+
+  input
+    color #444
+
+  .control
+    background #cececf
+    border none
+    border-radius 2px
+    color white
+    width annotations-control-height
+    height annotations-control-height
+    padding 0
+
+  .add-button
+    font-size 20px
+
+  .control:hover
+    background overlay-translucent
+
+  .control:active, .control:focus
+    outline none
+    border none
+
+  .filter
+    color white
+    line-height annotations-control-height
+    margin 0 35px 0 50px
+    padding-right 5px
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+
+    span
+      margin-left 3px
+
+    span::after
+      content ","
+
+    span:last-child::after
+      content ""
+
+.clear-filters
+  margin-top 2px
+
+.annotations-editor
+  height auto
+  z-index 90
+
+.annotations-form-wrapper, .annotations-editor-form-wrapper
+  .form-content
+    border 1px solid #e3e3e3
+    border-radius 2px
+
+    .format-toolbar
+      height 30px
+      position relative
+      display block
+      border-bottom 1px solid #e3e3e3
+      clear left
+      overflow-x hidden
+
+      .format-buttons
+        padding 0
+        margin 0 auto
+        height 100%
+
+        button
+          padding 2px
+          border none
+          background transparent
+          cursor pointer
+          line-height default-line-height
+          height 100%
+
+          i
+            padding 3px
+            border 1px solid transparent
+            border-radius 2px
+            color icon-gray
+
+        button:hover
+          i
+            color icon-gray-hover
+
+        button.active
+          i
+            color icon-gray-active
+            border-color #e3e3e3
+            background #f6f8f8
+
+        button.active:hover
+          i
+            color icon-gray-hover
+
+        button.disabled, button.disabled:hover
+          cursor default
+
+          i
+            color icon-gray-inactive
+
+    .form-body
+      padding 0 0.5em
+      font-weight normal
+      background white
+
+      .annotation-content-editor
+        min-height 100px
+        color #444
+        outline 0px solid transparent
+
+    .form-tags
+      border-top 1px solid #e3e3e3
+      min-height 20px
+      padding 6px 14px
+
+      i
+        position absolute
+        margin 5px 0
+        color icon-gray
+
+      ul.annotation-tags, ul.annotation-tags-editor
+        font-size smaller
+        border 0
+        margin 0 0 0 24px
+
+  .form-control
+    height 34px
+    padding 18px 0 0 0
+    text-align right
+
+    .access-control
+      margin 0 20px
+      text-align left
+
+    button.save
+      margin-right 0
+
+.annotations-editor-form-wrapper
+  padding 10px
+
+.annotations-editor.collapsed
+  min-height 50px
+
+  .form-header
+    display none
+
+  .form-content
+    min-height 28px
+
+    .format-toolbar
+      display none
+
+    .form-body .annotation-content-editor
+      min-height 16px
+
+      p
+        margin 6px 0
+
+  .form-tags
+    display none
+
+  .form-control
+    display none
+
+.annotations-list
+  list-style none
+  margin 0
+  padding 0
+  overflow auto
+  position fixed
+  z-index 90
+  /* To not crop the shadow of annotations we move the left edge
+     for 5px to the left and then add 5px (in fact 6px, so that
+     it looks better with our 1px shadow border) left margin to
+     each annotation. Same value is used in the publication.coffee
+     as well. */
+  left annotations-left - 5px
+  /* To not have scroll bar overlapping the content we move the right
+     edge for 10px to the right and then add 10px right margin to each
+     annotation */
+  right annotations-right - 10px
+  top header-height + 15px + annotations-control-height
+  bottom 0
+
+  .filtered-count
+    margin 15px 0 10px 53px
+
+  .avatar
+    font-size 16px
+
+    img
+      border-radius 4px
+
+  .annotation
+    position relative
+    display block
+    /* To not crop the shadow of annotations we move the left edge
+       for 5px to the left and then add 5px (in fact 6px, so that
+       it looks better with our 1px shadow border) left margin to each
+       annotation. Additionally, we add right margin to provide space
+       for meta menu + 10px to not have scroll bar overlapping the
+       content (we moved the right edge for 10px for that). */
+    /* margin 10px (small-meta-menu-width + 2 * small-meta-menu-padding + 5px + 10px) 10px 6px */
+    margin 10px 10px 10px 6px
+
+    .annotation-wrapper
+      position relative
+      display block
+      background white
+      margin 0 0 0 48px
+      border-radius 2px
+      box-shadow 0 0 0 1px box-shadow-border
+      transition 0.2s
+
+      .annotation-footer
+        padding 10px
+        background-color #f7f7f7
+        border-top 1px solid #e3e3e3
+
+        > .person.inline-item
+          margin-right 10px
+          display inline-block
+          vertical-align middle
+          height 30px
+          line-height 29px
+
+          .avatar
+            margin-right 10px
+
+        .access-control
+          .access-button
+            padding 0
+
+        .timestamp
+          color #444
+          display inline-block
+          vertical-align middle
+
+        .edit-button, .cancel-button
+          display inline-block
+          margin 5px
+          float right
+
+      .annotation-content
+        padding 5px 15px
+
+        .body[contenteditable=true]:focus
+          outline none
+
+        .tags .tagit-new
+          display none
+
+      .annotation-content, .annotation-content-editor
+        ul, ol
+          margin-left 0
+          margin-right 0
+          padding 0 1.8em
+
+        /* Spans are added only by rangy.saveSelection marks,
+           so we make sure they are not displayed */
+        span
+          line-height 0
+          display none
+
+      .saved
+        position absolute
+        right 4px
+        bottom 2px
+        color #cececf
+        transition opacity .5s ease-in-out
+
+        /* Initially hidden. To show "Saved" notification, change the opacity. */
+        opacity 0
+
+      .saved.display
+        opacity 1
+
+      ul.annotation-tags-list
+        font-size smaller
+        border 0
+
+    ul.comments-list
+      list-style-type none
+      margin 0 0 20px 57px
+      padding 0
+
+      li
+        margin 5px 0
+        overflow hidden
+
+        .avatar
+          float left
+          width 30px
+          height 30px
+          margin 0 7px 0 0
+
+        .comment-content
+          overflow hidden
+          background-color #f7f7f7
+          border 1px solid #e3e3e3
+          border-radius 2px
+          padding 7px
+
+          .comment-content-editor
+            background white
+            border 1px solid #e3e3e3
+            padding 0.5em
+            overflow hidden
+            color #444
+            outline 0px solid transparent
+            min-height 16px
+
+            /* Spans are added only by rangy.saveSelection marks,
+               so we make sure they are not displayed */
+            span
+              line-height 0
+              display none
+
+          .remove-button
+            float right
+
+          .body
+            /* Spans are added only by rangy.saveSelection marks,
+               so we make sure they are not displayed */
+            span
+              line-height 0
+              display none
+
+          button.comment
+            display none
+
+      li.comment-editor
+        display none
+
+        .avatar
+          margin-top 9px
+
+      li.comment-editor.active
+        display block
+
+        .comment-content
+          button.comment
+            display inline-block
+            float right
+            margin-top 7px
+
+    .meta-menu
+      position absolute
+      width small-meta-menu-width
+      height small-meta-menu-height
+      padding small-meta-menu-padding
+      /* We re-set z-index dynamically in Template.publicationAnnotations.rendered */
+      z-index 200
+      top 0
+      left 0
+
+      i.icon-menu
+        font-size small-meta-menu-icon-font-size
+
+      .meta-content
+        .references, .inside
+          span::after
+            content ","
+
+          span:last-child::after
+            content ""
+
+      .annotation-access
+        .selection
+          width 50%
+
+    .meta-menu:hover, .meta-menu.displayed
+      width 245px
+      height auto
+
+  .annotation:hover .annotation-wrapper, .annotation.selected .annotation-wrapper, .annotation.hovered .annotation-wrapper
+      /* Style used in pdf-text-highlight.coffee as well, keep it in sync */
+      /* TODO: Better show which annotations are selected, which annotations are hovered, and which annotations are highlighted to show which are linked to a highlight user is hovering over */
+      box-shadow 0 0 0 1px box-shadow-border, 0 2px 5px box-shadow-shadow
+
+  /* We use only 1px here to still have shadow border visible, but not 5px
+     top margin which makes visible lower than the crop top line when
+     scrolling. Otherwise when you have an initial list of annotations and
+     you scroll down there is 5px lag before annotation is cropped. With 1px
+     we fake things to look more or less normal, with shadow border, but
+     there it is not noticeable that cropping does not happen immediately. */
+  .annotation:first-child
+    margin-top 1px
+
+  .annotation.local, .annotation.invite
+    /* 11px instead of 10px for the same reason we are using 6px for left margin
+       instead of 5px - so that it looks better with our 1px shadow border. */
+    margin-right 11px
+
+  .annotation.local
+    margin-top 10px
+    margin-bottom 20px
+
+    .author
+      .avatar
+        position absolute
+        left 0
+        top 10px
+        width 30px
+        height 30px
+        margin 0
+        border-radius 4px
+
+    .annotation-wrapper::after
+      content ''
+      position absolute
+      border-style solid
+      border-width 7px 9px 7px 0
+      border-color transparent white
+      display block
+      width 0
+      z-index 1
+      left -9px
+      top 18px
+
+    .annotation-wrapper::before
+      content ''
+      position absolute
+      border-style solid
+      border-width 7px 9px 7px 0
+      border-color transparent #e3e3e3
+      display block
+      width 0
+      z-index 0
+      left -10px
+      top 18px
+
+  .annotation.selected
+    ul.comments-list
+      li.comment-editor
+        display block
+
+  .annotation.invite
+    position absolute
+    left 0
+    right 0
+    top 0
+    bottom 0
+    margin-top 0
+    margin-bottom 0
+    padding 0
+    background-color transparent
+    box-shadow none
+    text-align center
+    z-index -1
+
+    .vertical-align-outer
+      display table
+      height 100%
+      width 100%
+
+      .vertical-align-inner
+        display table-cell
+        vertical-align middle
+
+.editor-link-prompt-dialog
+  position fixed
+
+/* Context menus
+================ */
+
+.context-menu.meta-menu
+  position absolute
+  top 0
+  /* TODO: Temporary disabled, not yet finalized code
+  left 28px
+  */
+  left 0
+  height annotations-control-height
+  width 35px
+  padding 7px 5px
+  box-sizing border-box
+
+  .icons
+    white-space nowrap
+    font-size 17px
+    height annotations-control-height
+
+    .context-icon
+      display inline-block
+      vertical-align middle
+
+  .meta-content
+    padding 10px 10px 12px
+
+.context-menu.meta-menu.no-groups
+  width 33px
+
+.context-menu.meta-menu:hover
+  width 255px
+  height auto
+
+.work-in-groups.context-menu.meta-menu
+  .icons
+    .group-count
+      font-size 13px
+
+  .context-menu-groups
+    .toggle-list
+      background none
+      margin 0
+
+    .members-count
+      font-weight 300
+      font-size 12px
+      margin-left 10px
+
+    .no-groups.description
+      padding 10px
+
+.viewport-filter.context-menu.meta-menu
+  left auto
+  right 0
+
+  .icons
+    text-align right
+
+/* Footer
+========= */
+
+footer.publication-displayed
+  /* Initially we set it to display-page-loading width and
+     then in code we update it to real width based on the PDF */
+  width display-page-loading-width
+  margin-left viewer-left
